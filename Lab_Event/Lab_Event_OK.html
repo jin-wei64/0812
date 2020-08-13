@@ -69,15 +69,13 @@ a.boxclose {
 			// document.getElementById("box").style.top = event.clientY + "px";
 		}
 
-		function doAnimateHide() {
+		
+		$("#boxclose").click(function () {
 			$("#box").css({
 				"top":"-200px"
 			})
 			//document.getElementById("box").style.top = "-200px";
 			event.cancelBubble = true;
-		}
-		$("#boxclose").click(function(){
-			doAnimateHide();
 		})
 		//document.getElementById("boxclose").onclick = doAnimateHide;
 		
