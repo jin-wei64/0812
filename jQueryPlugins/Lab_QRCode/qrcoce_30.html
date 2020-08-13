@@ -32,12 +32,13 @@
         }
         return out;
     }
-        
-    class options{
+    
+    class options {
         text = toUtf8("https://zh.wikipedia.org/wiki/維基");
         width ="100";
         height = "100";
     }
+    
 // var options = {
 //     text: "http://www.google.com", 
 //     width: 100, 
@@ -49,6 +50,7 @@
 //     this.height =100;
 // }
     var a = new options();
+    alert(a.text);
     $('#qrcode').qrcode(a);
 
 </script>
