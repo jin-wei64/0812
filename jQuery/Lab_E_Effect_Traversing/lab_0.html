@@ -86,9 +86,11 @@
         // for(i in specieslist){
         //     $(".pet").eq(i).data("species",specieslist[i]);
         // }
-        $(".pet").each(function(index,value){
+
+        //https://www.jquery123.com/each/
+        $(".pet").each(function(index,element){
             //alert(value)
-            $(value).data("species",specieslist[index]);
+            $(element).data("species",specieslist[index]);
         })
         // $.each(specieslist,function(key,value){
         //     $(".pet").eq(key).data('species',value);
@@ -107,24 +109,6 @@
                 $(".pet").not("img[data-species='cat']").fadeTo("slow",0.5);
             } 
         })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     })  // end of init.
 
     </script>
