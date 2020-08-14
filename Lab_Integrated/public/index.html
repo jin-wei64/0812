@@ -28,7 +28,19 @@
         <div class="col-sm-4">
             <h2>最新消息<span class="pull-right"><button id="newItem" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></span></h2>
             <ul id="latestNews" class="list-group">
-                <li class="list-group-item">First item<span class="pull-right"><button class="btn btn-info btn-xs editItem"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button>&nbsp;<button class="btn btn-danger btn-xs deleteItem"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button></span></li>
+                <li class="list-group-item">First item
+                    <span class="pull-right">
+                        <button class="btn btn-info btn-xs editItem">
+                            <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                        </button>
+                        &nbsp;
+                        <button class="btn btn-danger btn-xs deleteItem">
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                        </button>
+                    </span>
+                </li>
+
+
                 <li class="list-group-item">Second item<span class="pull-right"><button class="btn btn-info btn-xs editItem"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button>&nbsp;<button class="btn btn-danger btn-xs deleteItem"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button></span></li>
                 <li class="list-group-item">Third item<span class="pull-right"><button class="btn btn-info btn-xs editItem"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button>&nbsp;<button class="btn btn-danger btn-xs deleteItem"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button></span></li>
             </ul>
@@ -140,112 +152,45 @@ function showToast(heading, message) {
 </script>
 
 
-
 <script>
 
 $(function () {
 
     var newsList =
-        [
-            { ymd: "2017-05-01", title: "Item 1" },
-            { ymd: "2017-05-01", title: "Item 2" },
-            { ymd: "2017-05-02", title: "Item 3" },
-            { ymd: "2017-05-03", title: "Item 4" },
-            { ymd: "2017-05-04", title: "Item 5" }
-        ];
+    [
+        { ymd: "2017-05-01", title: "Item 1" },
+        { ymd: "2017-05-01", title: "Item 2" },
+        { ymd: "2017-05-02", title: "Item 3" },
+        { ymd: "2017-05-03", title: "Item 4" },
+        { ymd: "2017-05-04", title: "Item 5" }
+    ];
 
-
-
-    $.get("/home/news", function (e) {
+    // 練習與任務:
+    $.ajax({
+        type:"get",
+        url:"/home/news"
+    }).then(function(e){
         newsList = JSON.parse(e);
-        refreshNewsUI();
+        refreshUI();
     })
 
-    function refreshNewsUI() {
+    function refreshUI(){
         $("#latestNews").empty();
+        for(let i = 0; i<newsList.length; i++){
+        let litext = newsList[i].ymd+"["+ newsList[i].title+"]";
+        let a = $("<li></li>")
+            .text(litext)
+            .addClass("list-group-item")
+            .append('<span class="pull-right"><button class="btn btn-info btn-xs editItem"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button>&nbsp;<button class="btn btn-danger btn-xs deleteItem"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button></span>')
+            .appendTo("#latestNews");
+            // $("#latestNews").append(a);
+    }
+    }
 
-        $.each(newsList, function (key, obj) {
-            var newsText = obj.title + " [" + obj.ymd + "]";
-            var $li = $("<li></li>")
-                        .text(newsText)
-                        .addClass("list-group-item");
-            $li.append('<span class="pull-right"><button class="btn btn-info btn-xs editItem"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button>&nbsp;<button class="btn btn-danger btn-xs deleteItem"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button></span>');
-            $li.appendTo("#latestNews");
-        })
     
-        $(".editItem").click(function () {
-            // var iIndex = $(this).parent().parent().index();
-            var iIndex = $(this).closest("li").index();
-            currentIndex = iIndex;
-            $("#titleTextBox").val(newsList[iIndex].title);
-            $("#ymdTextBox").val(newsList[iIndex].ymd);
-            $("#newsModal").modal( { backdrop: "static" } );
-        })
 
-        $(".deleteItem").click(function () {
-            var iIndex = $(this).closest("li").index();
-            $.ajax({
-                type: "delete",
-                url: "/home/news",
-                data: newsList[iIndex]
-            })
-            .then(function (e) {
-                showToast(e);
-                $.get("/home/news", function (e) {
-                    newsList = JSON.parse(e);
-                    refreshNewsUI();
-                })
-            })
-        })
 
-    }  // refreshNewsUI
 
-    var currentIndex = -1;
-    
-    $("#okButton").click(function () {
-        if (currentIndex >= 0) { // edit
-            newsList[currentIndex].title = $("#titleTextBox").val();
-            newsList[currentIndex].ymd = $("#ymdTextBox").val();
-            refreshNewsUI();
-            $("#newsModal").modal("hide");
-            
-            $.ajax({
-                type: "put",
-                url: "/home/news",
-                data: newsList[currentIndex]
-            })
-            .then(function (e) {
-                showToast(e);
-            })
-        }
-        else {  // new
-            var newItem = {
-                title: $("#titleTextBox").val(),
-                ymd: $("#ymdTextBox").val()
-            };
-            $.ajax({
-                type: "post",
-                url: "/home/news",
-                data: newItem
-            })
-            .then(function (e) {
-                $.get("/home/news", function (e) {
-                    newsList = JSON.parse(e);
-                    refreshNewsUI();
-                })
-            })
-            $("#newsModal").modal("hide");
-        }
-        
-        
-    })
-
-    $("#newItem").click(function () {
-        currentIndex = -1;
-        $("#titleTextBox").val("");
-        $("#ymdTextBox").val("");
-        $("#newsModal").modal( { backdrop: "static" } );
-    })
 
 
 })  // end of init.
